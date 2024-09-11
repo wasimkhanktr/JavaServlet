@@ -1,0 +1,95 @@
+package com.servlet.book;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/register")
+public class Register extends GenericServlet {
+	private static final long serialVersionUID = 1L;
+	private static final String sql = "INSERT INTO bookdata(bookName,bookEdition,bookPrice) VALUES(?,?,?)";
+
+	@Override
+	public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+		// Setting content type
+		res.setContentType("text/html");
+		// PrintWriter to send response to the client
+		PrintWriter pw = res.getWriter();
+
+		// Retrieving form parameters
+		String bookName = req.getParameter("bookName");
+		String bookEdition = req.getParameter("bookEdition");
+		double bookPrice = 0;
+
+		// Handling invalid bookPrice input
+		try {
+			bookPrice = Double.parseDouble(req.getParameter("bookPrice"));
+		} catch (NumberFormatException e) {
+			pw.println("<h2>Error: Invalid book price format.</h2>");
+			return; // Exit if book price is invalid
+		}
+
+		// JDBC connection
+		try {
+			//step 1 load and register jdbc driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			//step 2 Establish the connection 
+			
+			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb","root","root");
+			
+			PreparedStatement ps = con.prepareStatement(sql);
+			
+			// Setting the parameters for the prepared statement
+			ps.setString(1, bookName);
+			ps.setString(2, bookEdition);
+			ps.setDouble(3, bookPrice);
+			
+			// Execute the SQL update
+			int count = ps.executeUpdate();
+			if (count == 1) 
+			{
+				pw.println("<h2>Book Registration Successful!</h2>");
+				pw.println("<a href=\"./index.html\">Home</a>");
+				pw.println("<a href=\"booklist\">Show Books</a>");
+			} 
+			else 
+			{
+				pw.println("<h2>Book Registration Failed!</h2>");
+			}
+			
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		
+		try (
+				
+				
+				
+				
+				
+				
+		{
+			
+			
+
+			
+
+		} catch (Exception e) {
+			// Handle SQL errors gracefully
+			pw.println("<h2>Error: Unable to register the book.</h2>");
+			e.printStackTrace(pw); // Log the error for debugging
+		}
+	}
+}
