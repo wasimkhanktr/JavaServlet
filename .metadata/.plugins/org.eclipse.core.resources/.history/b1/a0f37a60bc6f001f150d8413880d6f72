@@ -1,0 +1,38 @@
+package wasim.servlet;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class RegisterServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Handle GET requests here
+        resp.setContentType("text/html");
+        resp.getWriter().println("<h1>Welcome to the Registration Page</h1>");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Retrieve form data from the request
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String email = req.getParameter("email");
+
+        // Process the registration logic
+        if (username != null && password != null && email != null) {
+            // In real-world apps, you would save these details to a database here.
+            resp.setContentType("text/html");
+            resp.getWriter().println("<h2>Registration Successful!</h2>");
+            resp.getWriter().println("<p>Username: " + username + "</p>");
+            resp.getWriter().println("<p>Email: " + email + "</p>");
+        } else {
+            // Handle missing parameters
+            resp.setContentType("text/html");
+            resp.getWriter().println("<h2>Error: Missing required fields</h2>");
+        }
+    }
+}

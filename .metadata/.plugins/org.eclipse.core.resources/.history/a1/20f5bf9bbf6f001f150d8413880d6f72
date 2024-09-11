@@ -1,0 +1,82 @@
+package wasim.servlet;
+
+import java.io.IOException;
+import java.io.PipedWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class RegisterServlet extends HttpServlet {
+	private static final String sql="INSERT INTO BOOKDATA(bookName,bookEdition,bookPrice) VALUES(?,?,?)";
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	//Print writer
+    	PipedWriter pw;
+    	// Retrieve form data from the request
+        String bookName = req.getParameter("bookName");
+        String bookEdition = req.getParameter("bookEdition");
+        double bookPrice = Double.parseDouble(req.getParameter("bookPrice"));
+
+        // Handle GET requests here
+        resp.setContentType("text/html");
+        resp.getWriter().println("<h1>Welcome to the Registration Page</h1>");
+        
+        //jdbc
+        
+        try {
+			Connection con=DriverManager.getConnection("jdbc:mysql//localhost:3306/mydb","root","root");
+			PreparedStatement ps=con.prepareStatement(sql);
+			ps.setString(1,bookName);
+			ps.setString(2, bookEdition);
+			ps.setDouble(3, bookPrice);
+			
+			int count = ps.executeUpdate();
+			if(count==1)
+			{
+				resp.getWriter().println("<h2>Book Registration Successfully..</h2>");
+			}
+			else
+			{
+				resp.getWriter().println("<h2>Book Registration is failed..</h2>");
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Retrieve form data from the request
+        String bookName = req.getParameter("bookName");
+        String bookEdition = req.getParameter("bookEdition");
+        double bookPrice = Double.parseDouble(req.getParameter("bookPrice"));
+
+        
+        
+        
+
+        // Process the registration logic
+        if (bookName != null && bookEdition != null && bookPrice != null) {
+            // In real-world apps, you would save these details to a database here.
+            resp.setContentType("text/html");
+            resp.getWriter().println("<h2>Registration Successful!</h2>");
+            resp.getWriter().println("<p>BookName: " + bookName + "</p>");
+            resp.getWriter().println("<p>bookEdition: " + bookEdition + "</p>");
+            resp.getWriter().println("<p>bookPrice: " + bookPrice + "</p>");
+        } else {
+            // Handle missing parameters
+            resp.setContentType("text/html");
+            resp.getWriter().println("<h2>Error: Missing required fields</h2>");
+        }
+    }
+}

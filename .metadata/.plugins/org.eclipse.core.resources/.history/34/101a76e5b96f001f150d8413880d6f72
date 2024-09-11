@@ -1,0 +1,14 @@
+package wasim.servlet;
+
+import javax.servlet.http.HttpServlet;
+
+public class RegisterServlet  extends HttpServlet {
+
+	public static void main(String[] args) 
+	{
+		
+		
+
+	}
+
+}

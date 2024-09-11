@@ -1,0 +1,78 @@
+package servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class UpdateBookServlet extends HttpServlet {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final String sql = "UPDATE BOOKDATA SET BOOKNAME=?, BOOKEDITION=?, BOOKPRICE=? WHERE ID=?";
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Setting content type
+        resp.setContentType("text/html");
+        PrintWriter pw = resp.getWriter();
+
+        // Retrieve form data from the request
+        String bookName = req.getParameter("bookName");
+        String bookEdition = req.getParameter("bookEdition");
+        double bookPrice = 0;
+        int id = 0;
+
+        // Parse price and ID safely
+        try {
+            bookPrice = Double.parseDouble(req.getParameter("bookPrice"));
+            id = Integer.parseInt(req.getParameter("id"));
+        } catch (NumberFormatException e) {
+            pw.println("<h2>Error: Invalid input format</h2>");
+            return;
+        }
+
+        // Check if any field is empty or invalid
+        if (bookName == null || bookEdition == null || bookPrice <= 0 || id <= 0) {
+            pw.println("<h2>Error: Missing or invalid data</h2>");
+            return;
+        }
+
+        // Database connection and update operation
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
+
+            // Prepare the SQL update statement
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, bookName);
+            ps.setString(2, bookEdition);
+            ps.setDouble(3, bookPrice);
+            ps.setInt(4, id);
+
+            // Execute the update
+            int count = ps.executeUpdate();
+            if (count == 1) {
+                pw.println("<h2>Book updated successfully</h2>");
+            } else {
+                pw.println("<h2>Book update failed. No such ID found.</h2>");
+            }
+
+            // Close resources
+            ps.close();
+            con.close();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            pw.println("<h2>Error: " + e.getMessage() + "</h2>");
+            e.printStackTrace();
+        }
+    }
+}

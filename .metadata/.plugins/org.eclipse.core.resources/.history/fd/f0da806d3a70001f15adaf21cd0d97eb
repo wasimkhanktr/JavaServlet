@@ -1,0 +1,55 @@
+package servlet;
+
+import java.io.IOException;
+import java.io.PipedWriter;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/delete")
+public class DeleteBookData extends HttpServlet {
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Setting content type
+		resp.setContentType("text/html");
+		// PrintWriter to send response to the client
+		PrintWriter pw = resp.getWriter();
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb","root","root");
+			
+			int id = 0;
+			id=Integer.parseInt(req.getParameter("delete"));
+			
+			 String sql = "DELETE FROM STUDENT WHERE ID = ?";
+			
+			// Creating PreparedStatement and setting the ID parameter
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, id);
+			
+			int count= ps.executeUpdate();
+			
+			
+			
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+
+}

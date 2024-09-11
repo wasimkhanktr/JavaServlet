@@ -1,0 +1,10 @@
+package wasim.servlet;
+
+public class RegisterServlet extends {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

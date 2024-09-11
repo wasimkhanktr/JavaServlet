@@ -1,0 +1,42 @@
+package servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/register")
+public class Register extends GenericServlet {
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public void service (ServletRequest req, ServletResponse res) throws ServletException, IOException
+	{
+		//to print data on browser
+		PrintWriter pw=res.getWriter();
+		
+	String name = req.getParameter("bookName");
+	String bookEdition = req.getParameter("bookEdition");
+	
+	double bookPrice = 0;
+    try {
+        bookPrice = Double.parseDouble(req.getParameter("bookPrice"));
+    } catch (NumberFormatException e) {
+        pw.println("<h2>Error: Invalid book price format.</h2>");
+        return; // Exit if book price is invalid
+    }
+	
+	//print in console
+	//System.out.println(name);
+
+		
+	//Allow to include html tag in java
+	pw.print("<h1 style=\"color: red;\">" +name+ "</h1>");
+	
+
+}
+}

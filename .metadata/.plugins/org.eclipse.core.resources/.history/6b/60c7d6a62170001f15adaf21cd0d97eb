@@ -1,0 +1,31 @@
+package servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/index")
+public class Demo extends GenericServlet {
+	
+	@Override
+	public void service (ServletRequest req, ServletResponse res) throws ServletException, IOException
+	{
+	String name = req.getParameter("name");
+	
+	//print in console
+	//System.out.println(name);
+	
+	//to print data on browser
+	PrintWriter pw=res.getWriter();
+		
+	//Allow to include html tag in java
+	pw.print("<h1 style=\"color: red;\">" +name+ "</h1>");
+	
+
+}
+}

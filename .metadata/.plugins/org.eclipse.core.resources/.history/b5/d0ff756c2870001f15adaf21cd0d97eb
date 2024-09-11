@@ -1,0 +1,118 @@
+package servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+
+//@WebServlet("/register")
+public class Register extends GenericServlet {
+	private static final long serialVersionUID = 1L;
+	private static final String sql = "INSERT INTO BOOKDATA(bookName,bookEdition,bookPrice) VALUES(?,?,?)";
+
+	@Override
+	public void service (ServletRequest req, ServletResponse res) throws ServletException, IOException
+	{
+	//to print data on browser
+//	PrintWriter pw=res.getWriter();
+//	String bookName = req.getParameter("bookName");
+//	String bookEdition = req.getParameter("bookEdition");
+//	String bookPrice = req.getParameter("bookPrice");
+	
+	
+//	double bookPrice = 0;
+//    try {
+//        bookPrice = Double.parseDouble(req.getParameter("bookPrice"));
+//    } catch (NumberFormatException e) {
+//        pw.println("<h2>Error: Invalid book price format.</h2>");
+//        return; // Exit if book price is invalid
+//    }
+    
+	
+	//jdbc connection
+	try {
+		
+		 Connection con = null;
+	        PreparedStatement pstmt = null;
+	        Scanner sc = new Scanner(System.in);
+
+	            // Establishing the connection
+	            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydbms", "root", "root");
+
+	            // SQL query with placeholders
+	            String sql = "INSERT INTO EMP (empid,ename, job, mgr, hiredate, sal, comm, deptno) VALUES (?,?, ?, ?, ?, ?, ?, ?)";
+
+	            // Creating a PreparedStatement object
+	            pstmt = con.prepareStatement(sql);
+
+	            
+	            
+	            // Getting input from the user
+	            System.out.println("Enter employee id: ");
+	            int empid = sc.nextInt();
+	            sc.nextLine();  // Consume newline left by nextInt()
+	            
+	            System.out.println("Enter employee name: ");
+	            String ename = sc.nextLine();
+
+	            System.out.println("Enter employee job: ");
+	            String job = sc.nextLine();
+
+	            System.out.println("Enter manager name: ");
+	            String mgr = sc.nextLine();
+
+	            System.out.println("Enter hire date (YYYY-MM-DD): ");
+	            String hiredate = sc.nextLine();
+
+	            System.out.println("Enter salary: ");
+	            int sal = sc.nextInt();
+
+	            System.out.println("Enter commission: ");
+	            int comm = sc.nextInt();
+
+	            System.out.println("Enter department number: ");
+	            int deptno = sc.nextInt();
+
+	            // Setting values for placeholders
+	            pstmt.setInt(1, empid);
+	            pstmt.setString(2, ename);
+	            pstmt.setString(3, job);
+	            pstmt.setString(4, mgr);
+	            pstmt.setString(5, hiredate);
+	            pstmt.setInt(6, sal);
+	            pstmt.setInt(7, comm);
+	            pstmt.setInt(8, deptno);
+
+	            // Executing the query
+	            int rowsInserted = pstmt.executeUpdate();
+	            if (rowsInserted > 0) {
+	                System.out.println("A new employee was inserted successfully!");
+	            }
+
+	            sc.close();
+
+		
+		
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+	//Allow to include html tag in java
+//	pw.print("<h1 style=\"color: red;\">" +bookName+ "</h1>");
+//	pw.print("<h1 style=\"color: red;\">" +bookEdition+ "</h1>");
+//	pw.print("<h1 style=\"color: red;\">" +bookPrice+ "</h1>");
+	
+	
+
+}
+}
