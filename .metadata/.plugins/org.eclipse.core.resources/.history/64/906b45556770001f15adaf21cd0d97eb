@@ -1,0 +1,97 @@
+package com.servlet.book;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/booklist")
+public class BookListServlet extends HttpServlet {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final String sql = "SELECT * FROM BOOKDATA";
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Setting content type
+		resp.setContentType("text/html");
+		// PrintWriter to send response to the client
+		PrintWriter pw = resp.getWriter();
+		
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			// Load MySQL JDBC driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			// Establish the connection
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
+			// Create a statement
+			stmt = con.createStatement();
+			// Execute the query
+			rs = stmt.executeQuery(sql);
+			
+			// Generate HTML table for displaying books
+			pw.println("<table border='1'>");
+			pw.println("<tr>");
+			pw.println("<th>ID</th>");
+			pw.println("<th>Book Name</th>");
+			pw.println("<th>Book Edition</th>");
+			pw.println("<th>Book Price</th>");
+			pw.println("<th>UpdateBook</th>");
+			pw.println("<th>DeleteBook</th>");
+			
+			pw.println("</tr>");
+			
+			// Iterate through the result set and print each book's details in a row
+			while (rs.next()) {
+				int id = rs.getInt(1);
+				String bookName = rs.getString("bookName");
+				String bookEdition = rs.getString("bookEdition");
+				String bookPrice = rs.getString("bookPrice");
+				
+				pw.println("<tr>");
+				pw.println("<td>" + id + "</td>");
+				pw.println("<td>" + bookName + "</td>");
+				pw.println("<td>" + bookEdition + "</td>");
+				pw.println("<td>" + bookPrice + "</td>");
+				pw.println("<td><a href='update?id="+rs.getInt(1)+"'>Edit</a></td>");
+				pw.println("<td><a href='delete?id="+rs.getInt(1)+"'>Delete</a></td>");
+				
+				pw.println("</tr>");
+			}
+			pw.println("</table>");
+			pw.println("<a href=\"./index.html\">Home</a>");
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			pw.println("<p>Error: Unable to fetch data from database.</p>");
+		} finally {
+			// Close resources
+			try {
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (con != null) con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+}

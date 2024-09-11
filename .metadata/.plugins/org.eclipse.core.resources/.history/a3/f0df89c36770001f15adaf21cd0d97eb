@@ -29,7 +29,7 @@
                 <td><input class="btn btn-primary" type="reset" name="cancel" id=""></td>
             </tr>
         </table>
-         <button class="btn btn-success text-white"><a class="text-white" href="booklist">Show Books</a></button>
+        <button class="btn btn-success"><a href="booklist">Show Books</a></button>
     </form>
 </body>
 </html>
