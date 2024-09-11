@@ -46,8 +46,8 @@ public class BookListServlet extends HttpServlet {
 			pw.println("<th>Book Name</th>");
 			pw.println("<th>Book Edition</th>");
 			pw.println("<th>Book Price</th>");
-//			pw.println("<th>UpdateBook</th>");
-//			pw.println("<th>DeleteBook</th>");
+			pw.println("<th>UpdateBook</th>");
+			pw.println("<th>DeleteBook</th>");
 			
 			pw.println("</tr>");
 			
@@ -63,13 +63,13 @@ public class BookListServlet extends HttpServlet {
 				pw.println("<td>" + bookName + "</td>");
 				pw.println("<td>" + bookEdition + "</td>");
 				pw.println("<td>" + bookPrice + "</td>");
-//				pw.println("<td><a href='update?id="+rs.getInt(1)+"'>Edit</a></td>");
-//				pw.println("<td><a href='delete?id="+rs.getInt(1)+"'>Delete</a></td>");
+				pw.println("<td><a href='updatescreen?id="+rs.getInt(1)+"'>Edit</a></td>");
+				pw.println("<td><a href='deleteurl?id="+rs.getInt(1)+"'>Delete</a></td>");
 				
 				pw.println("</tr>");
 			}
 			pw.println("</table>");
-			pw.println("<a href=\"./index.html\">Home</a>");
+			pw.println("<button><a href='./Register.html'>Home</a></button>");
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();

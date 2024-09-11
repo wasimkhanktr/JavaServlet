@@ -1,0 +1,73 @@
+package com.servlet.book;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/updateurl")
+public class EditServlet extends HttpServlet {
+    
+    private static final String sql = "UPDATE BOOKDATA set bookName=?, bookEdition=?, bookPrice=? WHERE ID = ?";
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html");
+        PrintWriter pw = resp.getWriter();
+
+        // Get ID from request
+        int id = Integer.parseInt(req.getParameter("id"));
+        String bookName = req.getParameter("bookName");
+		String bookEdition = req.getParameter("bookEdition");
+		String bookPrice = req.getParameter("bookPrice");
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            // Load MySQL JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Establish the connection
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
+
+            // Prepare the SQL statement
+            ps = con.prepareStatement(sql);
+            //get the edited data we want to edit
+            ps.setString(1,bookName);
+		    ps.setString(2,bookEdition);
+			ps.setString(3,bookPrice);
+			ps.setInt(1,id);
+            
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            pw.println("<p>Error: " + e.getMessage() + "</p>");
+        } finally {
+            // Close the resources
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+
+}

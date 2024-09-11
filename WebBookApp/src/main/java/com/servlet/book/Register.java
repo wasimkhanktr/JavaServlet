@@ -59,6 +59,8 @@ public class Register extends GenericServlet {
 			if (count == 1) 
 			{
 				pw.println("<h2>Book Registration Successful!</h2>");
+				pw.println("<button><a href=\"./index.html\">Home</a></button>");
+				pw.println("<button><a href=\"booklist\">Show Books</a></button>");
 			} 
 			else 
 			{

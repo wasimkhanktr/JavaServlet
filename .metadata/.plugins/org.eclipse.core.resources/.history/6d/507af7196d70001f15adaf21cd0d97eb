@@ -1,0 +1,62 @@
+package com.servlet.book;
+
+import java.io.IOException;
+import java.io.PipedWriter;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/deleteurl")
+public class DeleteBookData extends HttpServlet {
+	private static final String sql = "SELECT * FROM BOOKDATA";
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Setting content type
+		resp.setContentType("text/html");
+		// PrintWriter to send response to the client
+		PrintWriter pw = resp.getWriter();
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb","root","root");
+			
+			int id =Integer.parseInt(req.getParameter("id"));		
+			
+			// Creating PreparedStatement and setting the ID parameter
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, id);
+	
+			// Executing the delete operation
+			int rowsAffected = ps.executeUpdate();
+			pw.println("<h3>Deleted " + rowsAffected + " row(s) with ID = " + id+"</h3>");;
+			
+			 if(rowsAffected==1)
+			 {
+				 pw.println("<h3>one book detail delete where id ="+id+"</h3");
+				 pw.println("<a href=\"./index.html\">Home</a>");
+				 pw.println("<a href=\"booklist\">Show Books</a>");
+			 }
+			 else {
+	                pw.println("<h3>No book found with id = " + id + "</h3>");
+	            }
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+
+}

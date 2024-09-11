@@ -1,0 +1,87 @@
+package com.servlet.book;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class UpdateData extends HttpServlet {
+
+	@WebServlet("/update")
+	private static final String sql = "SELECT bookName,bookEdition,bookPrice FROM BOOKDATA WHERE ID = ?";
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Setting content type
+		resp.setContentType("text/html");
+		// PrintWriter to send response to the client
+		PrintWriter pw = resp.getWriter();
+		
+		//get id 
+		int id =Integer.parseInt(req.getParameter("id"));
+		
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			// Load MySQL JDBC driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			// Establish the connection
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
+			// Create a statement
+			ps= con.prepareStatement(sql);
+			ps.setInt(1, id);
+			
+			// Execute the query
+			rs = ps.executeQuery(sql);
+			//consumeSpace
+			rs.next();
+			
+			pw.println("<table border='1'>");
+			pw.println("<tr>");
+			pw.println("<th>ID</th>");
+			pw.println("<th>Book Name</th>");
+			pw.println("<th>Book Edition</th>");
+			pw.println("<th>Book Price</th>");
+			pw.println("</tr>");
+			
+			pw.println("<tr>");
+			pw.println("<td>"+id+"</td>");
+			pw.println("<td><input type='text' name='bookName' value='"+rs.getString(1)+"'></td>");
+			pw.println("<td><input type='text' name='bookEdition' value='"+rs.getString(2)+"'></td>");
+			pw.println("<td><input type='text' name='bookPrice' value='"+rs.getString(3)+"'></td>");
+			pw.println("</tr>");
+			
+			pw.println("</table>");
+			
+			
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			pw.println("<p>Error: Unable to fetch data from database.</p>");
+		} finally {
+			// Close resources
+			try {
+				if (rs != null) rs.close();
+				if (con != null) con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+}
