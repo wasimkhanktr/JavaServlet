@@ -1,0 +1,7 @@
+package com.servlet.book;
+
+import javax.servlet.http.HttpServlet;
+
+public class DeleteSarvlet extends HttpServlet {
+
+}
